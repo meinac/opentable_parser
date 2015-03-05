@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
+require 'date'
 
 class Parser
 
@@ -24,7 +25,7 @@ class Parser
 
   def parse_review(document)
     user_name = document.css('.review-user-info span').text
-    date = document.css('.review-meta span.color-light').text.sub('Dined on ', '')
+    date = DateTime.parse(document.css('.review-meta span.color-light').text.sub('Dined on ', ''))
     title = document.css('.review-title').text
     review = document.css('.review-content p').text
 
