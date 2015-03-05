@@ -25,7 +25,7 @@ class Parser
 
   def parse_review(document)
     user_name = document.css('.review-user-info span').text
-    date = DateTime.parse(document.css('.review-meta span.color-light').text.sub('Dined on ', ''))
+    date = parse_date(document.css('.review-meta span.color-light').text.sub('Dined on ', ''))
     title = document.css('.review-title').text
     review = document.css('.review-content p').text
 
@@ -35,6 +35,10 @@ class Parser
     service_rating = rating[2].text
 
     puts "#{user_name} -> (#{date}) (#{food_rating}, #{ambience_rating}, #{service_rating}) #{title} - #{review}"
+  end
+
+  def parse_date(date_string)
+    date_string =~ /Dined (.+) days ago/ ? date = DateTime.now - $1.to_i : DateTime.parse(date_string)
   end
 
 end
