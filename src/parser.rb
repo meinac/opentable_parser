@@ -34,7 +34,19 @@ class Parser
     ambience_rating = rating[1].text
     service_rating = rating[2].text
 
-    puts "#{user_name} -> (#{date}) (#{food_rating}, #{ambience_rating}, #{service_rating}) #{title} - #{review}"
+    actor = Actor.new(user_name: user_name)
+    letter = Letter.new(
+      actor: actor, 
+      provider: :opentable,
+      type: :comment,
+      created_at: date,
+      title: title,
+      review: review,
+      food_rating: food_rating,
+      ambience_rating: ambience_rating,
+      service_rating: service_rating
+    )
+    puts letter.to_json
   end
 
   def parse_date(date_string)
