@@ -6,6 +6,8 @@ class Parser
 
   def initialize(url)
     @url = url
+    sqs = Aws::Sqs.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'], {region: 'us-west-2'})
+    @queue = sqs.queue('opentable_letters')
   end
 
   def run
@@ -46,6 +48,7 @@ class Parser
       ambience_rating: ambience_rating,
       service_rating: service_rating
     )
+    @queue.push(letter.to_json)
     puts letter.to_json
   end
 

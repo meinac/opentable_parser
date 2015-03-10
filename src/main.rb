@@ -1,6 +1,7 @@
 require 'optparse'
 require 'pry'
 require 'json'
+require 'aws'
 
 require_relative 'parser'
 require_relative 'models/model'
