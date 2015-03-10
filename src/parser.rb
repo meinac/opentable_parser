@@ -1,13 +1,14 @@
 require 'nokogiri'
 require 'open-uri'
 require 'date'
+require 'aws-sdk'
 
 class Parser
 
   def initialize(url)
     @url = url
-    sqs = Aws::Sqs.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY'], {region: 'us-west-2'})
-    @queue = sqs.queue('opentable_letters')
+    @sqs_client = Aws::SQS::Client.new
+    @queue_url = @sqs_client.get_queue_url(queue_name: :opentable_letters).queue_url
   end
 
   def run
@@ -48,7 +49,10 @@ class Parser
       ambience_rating: ambience_rating,
       service_rating: service_rating
     )
-    @queue.push(letter.to_json)
+    @sqs_client.send_message(
+      queue_url: @queue_url,
+      message_body: letter.to_json
+    )
     puts letter.to_json
   end
 

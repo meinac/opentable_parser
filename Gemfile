@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'aws'
+gem 'aws-sdk'
 gem 'pry'
 gem 'nokogiri'
 gem 'json_pure'
