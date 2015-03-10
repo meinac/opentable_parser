@@ -3,9 +3,6 @@ require 'pry'
 require 'json'
 
 require_relative 'parser'
-require_relative 'models/model'
-require_relative 'models/letter'
-require_relative 'models/actor'
 
 options = {}
 OptionParser.new do |opts|

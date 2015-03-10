@@ -37,9 +37,8 @@ class Parser
     ambience_rating = rating[1].text
     service_rating = rating[2].text
 
-    actor = Actor.new(user_name: user_name)
-    letter = Letter.new(
-      actor: actor, 
+    letter = {
+      actor_name: user_name, 
       provider: :opentable,
       type: :comment,
       created_at: date,
@@ -48,7 +47,7 @@ class Parser
       food_rating: food_rating,
       ambience_rating: ambience_rating,
       service_rating: service_rating
-    )
+    }
     @sqs_client.send_message(
       queue_url: @queue_url,
       message_body: letter.to_json
