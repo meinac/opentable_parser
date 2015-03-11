@@ -1,14 +1,13 @@
 require 'nokogiri'
 require 'open-uri'
 require 'date'
-require 'aws-sdk'
 
 class Parser
 
   def initialize(url)
     @url = url
-    @sqs_client = Aws::SQS::Client.new
-    @queue_url = @sqs_client.get_queue_url(queue_name: :opentable_letters).queue_url
+    @pusher = Pusher.new
+    @letters = []
   end
 
   def run
@@ -23,6 +22,8 @@ class Parser
     next_link = document.css('a.pagination-next')[0]
     if next_link && next_link['href']
       parse(Nokogiri::HTML(open(next_link['href'])))
+    else
+      @pusher.push(@letters)
     end
   end
 
@@ -37,7 +38,7 @@ class Parser
     ambience_rating = rating[1].text
     service_rating = rating[2].text
 
-    letter = {
+    @letters << {
       actor_name: user_name, 
       provider: :opentable,
       type: :comment,
@@ -48,11 +49,6 @@ class Parser
       ambience_rating: ambience_rating,
       service_rating: service_rating
     }
-    @sqs_client.send_message(
-      queue_url: @queue_url,
-      message_body: letter.to_json
-    )
-    puts letter.to_json
   end
 
   def parse_date(date_string)

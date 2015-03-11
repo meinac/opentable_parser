@@ -3,6 +3,7 @@ require 'pry'
 require 'json'
 
 require_relative 'parser'
+require_relative 'pusher'
 
 options = {}
 OptionParser.new do |opts|
