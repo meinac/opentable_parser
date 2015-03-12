@@ -12,4 +12,8 @@ class ApiConsumer
     end
   end
 
+  def self.push_recent_date(date)
+    
+  end
+
 end

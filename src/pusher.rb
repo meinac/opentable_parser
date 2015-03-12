@@ -28,7 +28,7 @@ class Pusher
   end
 
   def push_to_api(recent_letter)
-    
+    ApiConsumer.push_recent_date(recent_letter[:created_at])
   end
 
 end
