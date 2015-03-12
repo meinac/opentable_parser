@@ -10,6 +10,7 @@ class Parser
     @last_fetch = parsable[:last_fetch] || DateTime.new(1970, 1, 1)
     @pusher = Pusher.new
     @letters = []
+    puts "Parse #{@url} for review time > #{@last_fetch}"
   end
 
   def run

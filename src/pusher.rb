@@ -10,8 +10,9 @@ class Pusher
   end
 
   def push(letters)
+    recent_letter = letters.first
     push_into_sqs(letters)
-    push_to_api(letters.last)
+    recent_letter && push_to_api(recent_letter)
   end
 
   def push_into_sqs(letters)
@@ -28,7 +29,7 @@ class Pusher
   end
 
   def push_to_api(recent_letter)
-    ApiConsumer.push_recent_date(recent_letter[:created_at])
+    ApiConsumer.push_recent_date(recent_letter[:user_id], recent_letter[:created_at].strftime("%Y-%m-%dT%H:%M:%S"))
   end
 
 end
