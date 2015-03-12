@@ -1,22 +1,14 @@
-require 'optparse'
 require 'pry'
-require 'json'
+require 'active_support/all'
 
 require_relative 'parser'
 require_relative 'pusher'
+require_relative 'api_consumer'
 
-options = {}
-OptionParser.new do |opts|
-  opts.banner = "Usage: main.rb [options]"
-  opts.on('-b', '--business NAME', 'Business id') { |v| options[:business] = v }
-end.parse!
-
-if options[:business].nil?
-  puts "Wrong number of arguments use -h to see usage"
-  exit
+while(true)
+  ApiConsumer.get_parsables.each do |parsable|
+    parser = Parser.new(parsable.symbolize_keys)
+    parser.run
+  end
+  sleep(1)
 end
-
-url = "http://www.opentable.com/#{options[:business]}"
-
-parser = Parser.new(url)
-parser.run

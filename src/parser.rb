@@ -4,8 +4,10 @@ require 'date'
 
 class Parser
 
-  def initialize(url)
-    @url = url
+  def initialize(**parsable)
+    @url = parsable[:url]
+    @user_id = parsable[:user_id]
+    @last_fetch = parsable[:last_fetch] || DateTime.new(1970, 1, 1)
     @pusher = Pusher.new
     @letters = []
   end
@@ -15,12 +17,16 @@ class Parser
   end
 
   def parse(document)
+    keep_parsing = true
     reviews = document.css('#reviews-results div.review')
     reviews.each do |review|
-      parse_review(review)
+      if !parse_review(review)
+        keep_parsing = false
+        break
+      end
     end
     next_link = document.css('a.pagination-next')[0]
-    if next_link && next_link['href']
+    if keep_parsing && next_link && next_link['href']
       parse(Nokogiri::HTML(open(next_link['href'])))
     else
       @pusher.push(@letters)
@@ -28,27 +34,22 @@ class Parser
   end
 
   def parse_review(document)
-    user_name = document.css('.review-user-info span').text
     date = parse_date(document.css('.review-meta span.color-light').text.sub('Dined on ', ''))
-    title = document.css('.review-title').text
-    review = document.css('.review-content p').text
-
-    rating = document.css('.review-stars-results-num')
-    food_rating = rating[0].text
-    ambience_rating = rating[1].text
-    service_rating = rating[2].text
-
-    @letters << {
-      actor_name: user_name, 
-      provider: :opentable,
-      type: :comment,
-      created_at: date,
-      title: title,
-      review: review,
-      food_rating: food_rating,
-      ambience_rating: ambience_rating,
-      service_rating: service_rating
-    }
+    puts date
+    if date > @last_fetch
+      @letters << {
+        user_id: @user_id,
+        actor_name: document.css('.review-user-info span').text, 
+        provider: :opentable,
+        type: :comment,
+        created_at: date,
+        title: document.css('.review-title').text,
+        review: document.css('.review-content p').text,
+        food_rating: document.css('.review-stars-results-num')[0].text,
+        ambience_rating: document.css('.review-stars-results-num')[1].text,
+        service_rating: document.css('.review-stars-results-num')[2].text
+      }
+    end
   end
 
   def parse_date(date_string)
