@@ -35,7 +35,6 @@ class Parser
 
   def parse_review(document)
     date = parse_date(document.css('.review-meta span.color-light').text.sub('Dined on ', ''))
-    puts date
     if date > @last_fetch
       @letters << {
         user_id: @user_id,
