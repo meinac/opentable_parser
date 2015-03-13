@@ -14,6 +14,7 @@ class Parser
 
   def run
     if @url
+      @parse_started_at = DateTime.now
       puts "Parse #{@url} for review time > #{@last_fetch}"
       parse(Nokogiri::HTML(open(@url)))
     end
@@ -32,7 +33,7 @@ class Parser
     if keep_parsing && next_link && next_link['href']
       parse(Nokogiri::HTML(open(next_link['href'])))
     else
-      @pusher.push(@letters)
+      @pusher.push(@letters, @parse_started_at)
     end
   end
 
