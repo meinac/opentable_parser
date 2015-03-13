@@ -5,7 +5,7 @@ class Pusher
 
   def initialize
     @sqs_client = Aws::SQS::Client.new
-    @queue_url = @sqs_client.get_queue_url(queue_name: :opentable_letters).queue_url
+    @queue_url = @sqs_client.get_queue_url(queue_name: ENV['LEAF_SOCIAL_LETTER_QUEUE']).queue_url
     @pbar = ConsoleProgressBar::ProgressBar.new
   end
 
