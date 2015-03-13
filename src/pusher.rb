@@ -21,7 +21,7 @@ class Pusher
       @sqs_client.send_message_batch(
         queue_url: @queue_url,
         entries: entries.map.with_index do |letter, index|
-          {id: index.to_s, message_body: letter.to_s}
+          {id: index.to_s, message_body: letter.to_json}
         end
       )
       counter.increase
