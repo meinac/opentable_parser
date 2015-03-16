@@ -4,6 +4,8 @@ require 'date'
 
 class Parser
 
+  MAX_TRY_COUNT = 5
+
   def initialize(**parsable)
     @url = parsable[:url]
     @user_id = parsable[:user_id]
@@ -16,7 +18,7 @@ class Parser
     if @url
       @parse_started_at = DateTime.now
       puts "Parse #{@url} for review time > #{@last_fetch}"
-      parse(Nokogiri::HTML(open(@url)))
+      parse(get_document(@url))
     end
   end
 
@@ -31,7 +33,7 @@ class Parser
     end
     next_link = document.css('a.pagination-next')[0]
     if keep_parsing && next_link && next_link['href']
-      parse(Nokogiri::HTML(open(next_link['href'])))
+      parse(get_document(next_link['href']))
     else
       @pusher.push(@letters, @parse_started_at)
     end
@@ -55,8 +57,18 @@ class Parser
     end
   end
 
-  def parse_date(date_string)
-    date_string =~ /Dined (.+) days ago/ ? date = DateTime.now - $1.to_i : DateTime.parse(date_string)
-  end
+  private
+
+    def parse_date(date_string)
+      date_string =~ /Dined (.+) days ago/ ? date = DateTime.now - $1.to_i : DateTime.parse(date_string)
+    end
+
+    def get_document(url, try_count = 0)
+      begin
+        Nokogiri::HTML(open(url))
+      rescue
+        try_count == MAX_TRY_COUNT ? Nokogiri::HTML('') : get_document(url, try_count + 1)
+      end
+    end
 
 end
