@@ -10,4 +10,5 @@ while(true)
     parser = Parser.new(parsable.symbolize_keys)
     parser.run
   end
+  sleep(30)
 end
