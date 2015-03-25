@@ -48,8 +48,8 @@ class Parser
           name: document.css('.review-user-info span').text
         },
         provider: :opentable,
-        type: :comment,
-        created_at: date,
+        letter_type: :comment,
+        created: date,
         title: document.css('.review-title').text,
         content: document.css('.review-content p').text,
         rating: {
