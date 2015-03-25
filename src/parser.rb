@@ -53,9 +53,9 @@ class Parser
         title: document.css('.review-title').text,
         content: document.css('.review-content p').text,
         rating: {
-          food_rating: document.css('.review-stars-results-num')[0].text,
-          ambience_rating: document.css('.review-stars-results-num')[1].text,
-          service_rating: document.css('.review-stars-results-num')[2].text
+          food: document.css('.review-stars-results-num')[0].text,
+          ambience: document.css('.review-stars-results-num')[1].text,
+          service: document.css('.review-stars-results-num')[2].text
         }
       }
     end
