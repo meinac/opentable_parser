@@ -44,15 +44,19 @@ class Parser
     if date > @last_fetch
       @letters << {
         user_id: @user_id,
-        actor_name: document.css('.review-user-info span').text, 
+        user: {
+          name: document.css('.review-user-info span').text
+        },
         provider: :opentable,
         type: :comment,
         created_at: date,
         title: document.css('.review-title').text,
-        review: document.css('.review-content p').text,
-        food_rating: document.css('.review-stars-results-num')[0].text,
-        ambience_rating: document.css('.review-stars-results-num')[1].text,
-        service_rating: document.css('.review-stars-results-num')[2].text
+        content: document.css('.review-content p').text,
+        rating: {
+          food_rating: document.css('.review-stars-results-num')[0].text,
+          ambience_rating: document.css('.review-stars-results-num')[1].text,
+          service_rating: document.css('.review-stars-results-num')[2].text
+        }
       }
     end
   end
